@@ -1,0 +1,22 @@
+# Unpaired EMNIST -> MNIST translation on held-out EMNIST test letters.
+# checkpoint_path: a checkpoint of a dual_emnist_mnist run (absolute or relative to the repository root).
+checkpoint_path: results/emnist_mnist/<results_dir>/checkpoints/checkpoint_final_ema.pt
+num_samples: 64
+evaluation_filename: evaluation.pt
+few_step_steps: [1, 2, 4, 5, 10, 25, 50, 100]
+
+output:
+  base_dir: results/final_emnist_mnist
+  plot_filename: source_above_generated.png
+  source_grid_filename: fresh_source_grid.png
+  generated_grid_filename: generated_grid.png
+  few_step_plot_filename: few_step_source_to_generated.png
+  few_step_grid_filename_pattern: few_step_generated_grid_{step}_steps.png
+  reversed_plot_filename: reversed_source_above_generated.png
+  reversed_source_grid_filename: reversed_fresh_mnist_grid.png
+  reversed_generated_grid_filename: reversed_generated_grid.png
+  reversed_few_step_plot_filename: reversed_few_step_source_to_generated.png
+  reversed_few_step_grid_filename_pattern: reversed_few_step_generated_grid_{step}_steps.png
+  dpi: 200
+  wspace: 0.1
+  hspace: 0.1

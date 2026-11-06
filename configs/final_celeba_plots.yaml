@@ -1,0 +1,10 @@
+# Generated, holdout and few-step CelebA samples.
+# checkpoint_path: a checkpoint of a dual_celeba run (absolute or relative to the repository root).
+checkpoint_path: results/celeba/<results_dir>/checkpoints/checkpoint_final_ema.pt
+num_samples: 64 # perfect square: samples are shown in a square grid
+split: valid # holdout split for the dataset samples
+few_step_steps: [1, 3, 5, 10, 15, 30]
+
+output:
+  base_dir: results/final_celeba
+  dpi: 100

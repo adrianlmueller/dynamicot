@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.pytest_cache/
+.DS_Store
+.vscode/
+
+# Datasets and experiment outputs
+/data/
+/results/

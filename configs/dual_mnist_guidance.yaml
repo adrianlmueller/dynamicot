@@ -1,0 +1,63 @@
+# Conditional MNIST generation with classifier-free guidance (Section 4.2).
+seed: 111
+device: cuda
+dtype: float32
+
+data:
+  root: ./data
+  train: true
+  download: true
+  digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  n_samples: 59904
+  width: 28
+  source:
+    type: upsampled_uniform
+    resize_mode: bicubic
+    base_width: 7
+    antialias: true
+
+model:
+  input_channels: 1
+  conv_channels: [64, 128, 128]
+  fc_hidden_dim: 480
+  output_dim: 1
+  time_embedding_dim: 64
+  label_embedding_dim: 64
+  unconditional_label: 1.0
+  use_pooling: true
+  pooling_type: avg
+  activation_type: softplus
+  softplus_beta: 5.0
+  final_activation: identity
+
+training:
+  horizon: 99
+  time_chunk_size: 10
+  iterations: 20000
+  snapshot_interval: 2000
+  initialization_type: linear
+  ema_decay: 0.999
+  conditioning:
+    p_unconditional: 0.2
+    unconditional_label: 1.0
+  batching:
+    batch_size: 256
+    type: random
+  primal:
+    lr: 0.25
+    noise_scale: 0.0001
+    num_steps: 5
+  dual:
+    optimizer: adamw
+    lr: 0.001
+    beta1: 0.0
+    beta2: 0.999
+    eps: 1.0e-08
+    weight_decay: 1.0e-02
+
+evaluation:
+  num_samples_per_class: 5
+  guidance_scale: 2.0
+
+output:
+  base_dir: results/mnist_guidance

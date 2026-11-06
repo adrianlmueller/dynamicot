@@ -1,0 +1,42 @@
+# 2D experiments (Table 1 and Table 2). Every (dataset, initialization_type) pair is
+# trained and evaluated num_repetitions times, where repetition r uses seed + r.
+seed: 6432
+device: cuda
+dtype: float32
+
+table:
+  datasets: [moons, scurve, 8gaussians, moons_8gaussians]
+  initialization_types: [linear, ot] # linear: random minibatch coupling (VDT), ot: minibatch OT coupling (VDT+)
+  num_repetitions: 5
+
+data:
+  n_samples: 10000
+
+model:
+  hidden_dims: [64, 64, 64]
+  time_embedding_dim: 32
+
+training:
+  horizon: 99
+  iterations: 10000
+  snapshot_interval: 2000
+  batching:
+    batch_size: 100
+    type: random
+  primal:
+    lr: 0.5
+    noise_scale: 0.001
+    num_steps: 5
+  dual:
+    lr: 0.0001
+    beta1: 0.9
+    beta2: 0.999
+    eps: 1.0e-08
+
+# Fresh source/target samples (seed + 1000) are used to evaluate few-step generation.
+evaluation:
+  n_samples: 10000
+  h_test: [1, 2, 5, 10, 20, 50, 100]
+
+output:
+  base_dir: results/dual_2d_table

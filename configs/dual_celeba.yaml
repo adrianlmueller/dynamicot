@@ -1,0 +1,65 @@
+# CelebA 32x32 (Section 4.3). Note: with batch_size 258 and horizon 30 this run does not
+# fit into the memory of a single standard GPU (the paper run used 6 H100s).
+seed: 33
+device: cuda
+dtype: float32
+
+data:
+  root: ./data
+  download: true
+  split: train
+  n_samples: 161766 # must be divisible by batch_size
+  center_crop: 178 # aligned 178x218 images are center-cropped to 178x178 ...
+  width: 32 # ... and downsampled to 32x32
+  resize_mode: area
+  antialias: true
+  # The preprocessed split is cached under <root>/celeba/preprocessed (or cache_dir).
+  cache_workers: 16
+  source:
+    type: uniform
+
+model:
+  architecture: resnet # 13,180,938 parameters
+  input_channels: 3
+  conv_channels: [64, 128, 256, 256]
+  blocks_per_level: [2, 2, 3, 3]
+  head_hidden_dims: [64, 128, 128, 128]
+  global_head_hidden_dim: 256
+  time_embedding_dim: 128
+  conditioning_dim: 256
+  norm_groups: 16
+  output_dim: 1
+  activation_type: silu
+  energy_weight_init: 0.2
+  final_activation: identity
+
+training:
+  horizon: 30
+  time_chunk_size: 33
+  iterations: 100000
+  snapshot_interval: 25000
+  initialization_type: ot
+  ema_decay: 0.9995
+  batching:
+    batch_size: 258
+    type: random
+  primal:
+    lr: 0.25
+    noise_scale: 0.0001
+    num_steps: 5
+    clamp: [0.0, 1.0] # particles are clamped to the pixel range after every primal update
+  dual:
+    optimizer: adamw
+    lr: 1.0e-04
+    lr_schedule:
+      type: piecewise_constant
+      milestones:
+        - step: 50000
+          lr: 5.0e-05
+    beta1: 0.0
+    beta2: 0.999
+    eps: 1.0e-08
+    weight_decay: 1.0e-02
+
+output:
+  base_dir: results/celeba

@@ -1,0 +1,15 @@
+# Conditional MNIST generation with classifier-free guidance.
+# checkpoint_path: a checkpoint of a dual_mnist_guidance run (absolute or relative to the repository root).
+checkpoint_path: results/mnist_guidance/<results_dir>/checkpoints/checkpoint_final_ema.pt
+seed: 123
+num_samples_per_label: 5
+guidance_scales: [0.5, 1.0, 2.0, 4.0]
+evaluation_filename: evaluation.pt
+
+output:
+  base_dir: results/final_conditional_guidance
+  conditional_plot_filename: conditional_generation.png
+  guidance_plot_filename_pattern: guided_generation_scale_{scale_label}.png
+  dpi: 200
+  wspace: 0.1
+  hspace: 0.1

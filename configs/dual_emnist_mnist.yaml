@@ -1,0 +1,53 @@
+# Unpaired EMNIST letters (A-E) to MNIST digits translation (Section 4.2).
+seed: 20
+device: cuda
+dtype: float32
+
+data:
+  root: ./data
+  train: true
+  download: true
+  digits: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  n_samples: 23936
+  width: 28
+  source:
+    letters: [A, B, C, D, E]
+    fix_orientation: true
+
+model:
+  architecture: cnn
+  input_channels: 1
+  conv_channels: [64, 128, 128]
+  fc_hidden_dim: 480
+  output_dim: 1
+  time_embedding_dim: 64
+  use_pooling: true
+  pooling_type: avg
+  activation_type: softplus
+  softplus_beta: 5.0
+  final_activation: identity
+
+training:
+  horizon: 99
+  time_chunk_size: 10
+  iterations: 30000
+  snapshot_interval: 2000
+  initialization_type: ot
+  ema_decay: 0.999
+  batching:
+    batch_size: 128
+    type: random
+  primal:
+    lr: 0.25
+    noise_scale: 0.0001
+    num_steps: 5
+  dual:
+    optimizer: adamw
+    lr: 0.001
+    beta1: 0.0
+    beta2: 0.999
+    eps: 1.0e-08
+    weight_decay: 1.0e-02
+
+output:
+  base_dir: results/emnist_mnist
